@@ -1,0 +1,20 @@
+FROM nvcr.io/nvidia/tensorflow:21.06-tf1-py3
+
+RUN pip install --upgrade pip
+RUN pip --no-cache-dir install keras
+
+EXPOSE 8443
+
+RUN curl -fsSL https://code-server.dev/install.sh | sh
+RUN mkdir -p /root/.code-server/extensions
+
+RUN wget https://github.com/microsoft/vscode-python/releases/download/2021.6.944021595/ms-python-release.vsix
+RUN code-server --install-extension ms-python-release.vsix
+
+RUN wget https://github.com/kbrose/vsc-python-indent/releases/download/v1.14.2/vsc-python-indent-1.14.2.vsix
+RUN code-server --install-extension vsc-python-indent-1.14.2.vsix
+
+RUN mkdir -p /root/.local/share/code-server/User/
+COPY settings.json /root/.local/share/code-server/User/
+
+WORKDIR /notebooks

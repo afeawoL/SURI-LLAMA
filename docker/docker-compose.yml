@@ -1,0 +1,52 @@
+services:
+    leslie-pt:
+        build: 
+            context: .
+            dockerfile: ./Dockerfile.pytorch
+        ports:
+            - "40888:8888"
+            - "40806:6006"
+            - "40890:8443"  
+        volumes:
+            - "/home/$USER/projects:/notebooks"
+            - "/home/storage-drive/llama:/notebooks/data"
+        environment:
+            - "PASSWORD=$PASSWORD"
+            - "JUPYTER_TOKEN=$PASSWORD"
+            - "NVIDIA_VISIBLE_DEVICES=all"
+        restart: always
+        image: leslie_pt
+        container_name: leslie_pt
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          device_ids: ['0']
+                          capabilities: [gpu]
+        entrypoint: ["jupyter", "lab", "--ip=0.0.0.0", "--allow-root", "--notebook-dir='/notebooks'"]
+    leslie-tf2:
+        build:
+            context: .
+            dockerfile: ./Dockerfile.tf2
+        ports:
+            - "40788:8888"
+            - "40706:6006"
+            - "40790:8443"
+        volumes:
+            - "/home/$USER/projects:/notebooks"
+        environment:
+            - "PASSWORD=$PASSWORD"
+            - "JUPYTER_TOKEN=$PASSWORD"
+            - "NVIDIA_VISIBLE_DEVICES=all"
+        restart: always
+        image: leslie_tf2
+        container_name: leslie_tf2
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          device_ids: ['0']
+                          capabilities: [gpu]
+        entrypoint: ["jupyter", "lab", "--ip=0.0.0.0", "--allow-root", "--notebook-dir='/notebooks'"]
